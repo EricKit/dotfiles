@@ -1,0 +1,460 @@
+" be iMproved
+set nocompatible
+
+" Load plugins (with vim-bundle)
+filetype off
+set runtimepath^=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+    " See information abotu CtrlP below, this is faster search for it
+    Plugin 'FelikZ/ctrlp-py-matcher'
+    " Show icons for modified lines
+    " https://github.com/airblade/vim-gitgutter
+    Plugin 'airblade/vim-gitgutter'
+    " vim syntax file for plantuml
+    " https://github.com/aklt/plantuml-syntax
+    Plugin 'aklt/plantuml-syntax'
+    " vim syntax for yaml files
+    " https://github.com/avakhov/vim-yaml
+    Plugin 'avakhov/vim-yaml'
+    " Nice status bar for Vim
+    " https://github.com/bling/vim-airline
+    Plugin 'bling/vim-airline'
+    " Highlights trailing whitespace in red and provides :FixWhitespace to fix it.
+    " https://github.com/bronson/vim-trailing-whitespace
+    Plugin 'bronson/vim-trailing-whitespace'
+    " Seamless navigation between tmux panes and vim splits
+    Plugin 'christoomey/vim-tmux-navigator'
+    " Syntax for dockerfile
+    Plugin 'ekalinin/Dockerfile.vim'
+    " Syntax for json files
+    Plugin 'elzr/vim-json'
+    " Support for golang
+    Plugin 'fatih/vim-go'
+    " Plugin manager
+    Plugin 'gmarik/Vundle.vim'
+    " Match tag for html tags
+    Plugin 'gregsexton/MatchTag'
+    " css3 syntax
+    Plugin 'hail2u/vim-css3-syntax'
+    " javascript additional syntax
+    Plugin 'jelera/vim-javascript-syntax'
+    " toggle cursor for vim
+    Plugin 'jszakmeister/vim-togglecursor'
+    " Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
+    " http://kien.github.io/ctrlp.vim/
+    Plugin 'kien/ctrlp.vim'
+    " Support for python
+    Plugin 'klen/python-mode'
+    " Support for typescript
+    Plugin 'leafgarland/typescript-vim'
+    " JavaScript indent plugin
+    Plugin 'lukaszb/vim-web-indent'
+    " Browser for tags
+    Plugin 'majutsushi/tagbar'
+    " Syntax for some javascript libraries
+    Plugin 'othree/javascript-libraries-syntax.vim'
+    " Support for markdown
+    Plugin 'plasticboy/vim-markdown'
+    " Ag search, use it instead of grep
+    Plugin 'rking/ag.vim'
+    " File browser
+    Plugin 'scrooloose/nerdtree'
+    " Syntax linters
+    Plugin 'scrooloose/syntastic'
+    " Monokai theme for vim
+    Plugin 'sickill/vim-monokai'
+    " Syntax for tmux files
+    Plugin 'tmux-plugins/vim-tmux'
+    " Make vim to work better in tmux
+    Plugin 'tmux-plugins/vim-tmux-focus-events'
+    " Git wrapper
+    Plugin 'tpope/vim-fugitive'
+    " Additional surround snippets
+    Plugin 'tpope/vim-surround'
+    " Good shortcuts for switching between different lists
+    Plugin 'tpope/vim-unimpaired'
+call vundle#end()
+
+syntax enable
+filetype plugin indent on
+
+runtime macros/matchit.vim
+
+" Colorsheme
+set background=dark
+colorscheme monokai
+
+" Set default fonts
+set guifont="Inconsolata-dz for Powerline":h12
+
+" Smartcase for search (if has uppercase letters = case sensitive)
+set ignorecase
+set smartcase
+
+" mouse support
+set mouse=a
+
+" Indicate that last window have a statusline too (support for airline)
+set laststatus=2
+
+" no beep
+set visualbell
+
+" Disable wrapping long string
+set nowrap
+
+" Numbers of rows to keep to the left and to the right off the screen
+set scrolloff=10
+
+" Numbers of columns to keep to the left and to the right off the screen
+set sidescrolloff=10
+
+" set window size
+if has ("gui_running")
+    set lines=50 columns=120
+endif
+
+" show column on 80 symbols
+if (exists('+colorcolumn'))
+    set colorcolumn=80
+    highlight ColorColumn ctermbg=9
+endif
+
+" Shortcut to rapidly toggle `set list`
+nmap <leader>l :set list!<CR>
+
+" -- sudo save
+cmap w!! w !sudo tee >/dev/null %
+
+" Use the same symbols as TextMate for tabstops and EOLs
+set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_
+
+" show line numbers
+set number
+
+" show command in bottom bar
+set showcmd
+
+" highlight current line
+set cursorline
+
+" redraw only when we need to.
+set lazyredraw
+
+" set history to the 100 instead of 12
+set history=100
+
+" ******************** "
+" Tabs
+"
+
+" Copy indent from previous line
+set autoindent
+
+" Enable smart indent. it add additional indents whe necessary
+set smartindent
+
+" Replace tabs with spaces
+set expandtab
+
+" Whe you hit tab at start of line, indent added according to shiftwidth value
+set smarttab
+
+" number of spaces to use for each step of indent
+set shiftwidth=4
+
+" Number of spaces that a Tab in the file counts for
+set tabstop=4
+
+" Same but for editing operation (not shure what exactly does it means)
+" but in most cases tabstop and softtabstop better be the same
+set softtabstop=4
+
+" Round indent to multiple of 'shiftwidth'.
+" Indentation always be multiple of shiftwidth
+" Applies to  < and > command
+set shiftround
+
+" ******************** "
+" Wildmenu
+"
+
+" visual autocomplete for command menu
+set wildmenu
+
+" Autocmpletion hotkey
+set wildcharm=<TAB>
+
+" ******************** "
+" Searching
+"
+
+" search as characters are entered
+set incsearch
+
+" Show matching brackets
+set showmatch
+
+" Make < and > match as well
+set matchpairs+=<:>
+
+" ******************** "
+" Folding
+"
+"
+" No fold closed at open file
+set foldlevelstart=99
+set nofoldenable
+
+" Enable syntax folding in javascript
+let javaScript_fold=1
+
+" Keymap to toggle folds with space
+nmap <space> za
+
+" ******************** "
+" Backups
+"
+
+" Disable backups file
+set nobackup
+
+" Disable vim common sequense for saving.
+" By defalut vim write buffer to a new file, then delete original file
+" then rename the new file.
+set nowritebackup
+
+" Disable swp files
+set noswapfile
+
+" ******************** "
+" Edit
+"
+
+" Allow backspace to remove indents, newlines and old text
+set backspace=indent,eol,start
+
+" Add '-' as recognized word symbol. e.g dw delete all 'foo-bar' instead just 'foo'
+set iskeyword+=-
+
+" Ctrl+a and Ctrl+x should support alpha (a,b,c) and hex (0x001) inc/decr
+" This turn off octal mode (007 -> 010 on Ctrl+a)
+set nrformats=alpha,hex
+
+" ******************** "
+" Diff Options
+"
+
+" Display filler
+set diffopt=filler
+
+" Open diff in horizontal buffer
+set diffopt+=horizontal
+
+" Ignore changes in whitespaces characters
+set diffopt+=iwhite
+
+" ******************** "
+" Custom file settings
+"
+
+augroup configgroup
+    autocmd!
+    autocmd VimEnter * highlight clear SignColumn
+    autocmd FileType python setlocal commentstring=#\ %s
+    autocmd BufEnter *.zsh-theme setlocal filetype=zsh
+    autocmd BufEnter Makefile setlocal noexpandtab
+
+    " For bash 2 is good for tabs
+    autocmd BufEnter,BufNewFile *.sh setlocal tabstop=2
+    autocmd BufEnter,BufNewFile *.sh setlocal shiftwidth=2
+    autocmd BufEnter,BufNewFile *.sh setlocal softtabstop=2
+
+    autocmd BufRead,BufNewFile *.json set ft=json
+
+    " Add spell checker for markdown files
+    autocmd FileType markdown setlocal spell
+
+    " Wrap lines for markdown as it is text
+    autocmd FileType markdown set wrap linebreak nolist
+
+    " Disable vertical line at max string length in NERDTree
+    autocmd FileType nerdtree setlocal colorcolumn=""
+
+    " Enable Folding, uses plugin vim-javascript-syntax
+    autocmd FileType javascript* call JavaScriptFold()
+
+    " Wrap for markdown as it is text
+    autocmd FileType gitcommit set wrap linebreak nolist
+    autocmd FileType gitcommit setlocal textwidth=0
+    autocmd FileType gitcommit setlocal spell
+augroup END
+
+" ----------------------
+"  Plugins
+" ----------------------
+
+" ******************** "
+" NERDTree
+"
+
+" Tell NERDTree to display hidden files on startup
+let NERDTreeShowHidden=1
+
+" Disable bookmarks label, and hint about '?'
+let NERDTreeMinimalUI=1
+
+" Display current file in the NERDTree ont the left
+nmap <silent> <leader>f :NERDTreeFind<CR>
+
+" Toggle nerd tree on the left
+map <C-n> :NERDTreeToggle<CR>
+
+
+" ******************** "
+" ctrlp
+"
+
+" Open ctrlp in the same window as nerdtree
+let g:ctrlp_dont_split = 'nerdtree'
+
+" No limits
+:let g:ctrlp_max_files=0
+
+" Ignore path from git/hg and svn
+let g:ctrlp_custom_ignore = {
+    \ 'dir':  '\v[\/]\.(git|hg|svn)$'
+    \ }
+
+" The maximum depth of a directory tree to recurse into
+let g:ctrlp_max_depth = 40
+
+" Use ctrlp-py-matcher for faster search
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+
+" disable automatically changing working path
+let g:ctrlp_working_path_mode = ''
+
+" custom commands to get all files for ctrlp
+let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 1: ['.git', 'cd %s && git ls-files --cached --others --exclude-standard'],
+    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+    \ },
+  \ 'fallback': 'find %s -type f'
+  \ }
+
+" ******************** "
+" Syntastic
+"
+
+" Enable autochecks
+let g:syntastic_check_on_open=1
+let g:syntastic_enable_signs=1
+
+" Change icons
+let g:syntastic_error_symbol = "✗"
+let g:syntastic_warning_symbol = "⚠"
+
+" Don't run on :wq
+let g:syntastic_check_on_wq = 0
+
+" check json files with jshint
+let g:syntastic_filetype_map = { "json": "javascript", }
+
+" For correct works of next/previous error navigation
+let g:syntastic_always_populate_loc_list = 1
+
+" Enable tslint and compiler check for TypeScript
+let g:syntastic_typescript_checkers = ['tslint', 'tsc']
+
+" For go we only want to use format (build is slow)
+let g:syntastic_go_checkers = [ 'gofmt' ]
+
+" C/C++
+let g:syntastic_cpp_checkers = [ ]
+let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = '-Wall -Wextra -Werror'
+let g:syntastic_c_checkers = [ ]
+let g:syntastic_c_compiler = 'clang++'
+let g:syntastic_c_compiler_options = '-Wall -Wextra -Werror'
+
+" ******************** "
+" DelimitMate
+"
+
+" Delimitmate place cursor correctly n multiline objects e.g.
+" if you press enter in {} cursor still be
+" in the middle line instead of the last
+let delimitMate_expand_cr = 1
+
+" Delimitmate place cursor correctly in singleline pairs e.g.
+" if x - cursor if you press space in {x} result will be { x } instead of { x}
+let delimitMate_expand_space = 1
+
+" ******************** "
+" vim-airline
+"
+
+" Colorscheme for airline
+let g:airline_theme='understated'
+
+" Enable airline for tab-bar
+let g:airline#extensions#tabline#enabled = 1
+
+" Use airline powerline fonts for symbols
+let g:airline_powerline_fonts = 1
+
+" ******************** "
+" vim-markdown
+"
+
+" markdown plugin configuration
+let g:vim_markdown_frontmatter=1
+
+" ******************** "
+" json
+"
+
+" json plugin, don't conceal
+let g:vim_json_syntax_conceal = 0
+
+" ********************* "
+" go with tagbar
+"
+
+" See https://github.com/jstemmer/gotags
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+\ }
+
+" *********************** "
+" pymode
+"
+
+" Annoying feature
+let g:pymode_rope_complete_on_dot = 0
