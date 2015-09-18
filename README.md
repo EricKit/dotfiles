@@ -5,6 +5,7 @@ git clone --recursive https://EricKit@bitbucket.org/EricKit/dotfiles.git .dotfil
 or 
 
 git submodule init 
+
 git submodule update
 
 ~/.dotfiles/install.zsh
