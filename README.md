@@ -12,7 +12,11 @@
 
 ***
 
+##Do for all##
+
 `~/.dotfiles/install.zsh`
+
+Reload shell
 
 `vundle-update`
 
