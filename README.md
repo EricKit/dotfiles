@@ -1,6 +1,6 @@
 # README #
 
-git clone --recursive git://github.com/foo/bar.git
+git clone --recursive https://EricKit@bitbucket.org/EricKit/dotfiles.git .dotfiles
 
 or 
 
