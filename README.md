@@ -4,12 +4,20 @@
 
 ***
 
-`git submodule init`
+##If you did not do recursive##
+
+`git submodule init` 
 
 `git submodule update`
+
+***
 
 `~/.dotfiles/install.zsh`
 
 `vundle-update`
 
 `brew-essentials` mac only
+
+***
+
+install autojump
