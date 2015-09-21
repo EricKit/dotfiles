@@ -43,10 +43,10 @@ AUTOENV_FILE_LEAVE=.envl
 
 # tmux plugin settings
 # this always starts tmux
-#ZSH_TMUX_AUTOSTART=true
-#ZSH_TMUX_AUTOSTART_ONCE=true
-#ZSH_TMUX_FIXTERM=true
-#ZSH_TMUX_AUTOQUIT=false
+ZSH_TMUX_AUTOSTART=true
+ZSH_TMUX_AUTOSTART_ONCE=true
+ZSH_TMUX_FIXTERM=true
+ZSH_TMUX_AUTOQUIT=false
 
 # Powerlevel9k is the best theme for prompt, I like to keep it in dark gray colors
 DEFAULT_USER=eric
@@ -130,13 +130,13 @@ if [ ! $TERM = dumb ]; then
         #zgen load $DOTFILES/plugins/my-digitalocean
         #zgen load $DOTFILES/plugins/rbenv
         #zgen load $DOTFILES/plugins/pyenv
-        #zgen load $DOTFILES/plugins/tpm
+        zgen load $DOTFILES/plugins/tpm
 
         # load https://github.com/bhilburn/powerlevel9k theme for zsh
         zgen load bhilburn/powerlevel9k powerlevel9k.zsh-theme
 
         # It takes control, so load last
-        #zgen load $DOTFILES/plugins/my-tmux
+        zgen load $DOTFILES/plugins/my-tmux
 
         zgen save
     fi
