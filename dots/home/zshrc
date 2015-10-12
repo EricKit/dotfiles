@@ -87,7 +87,7 @@ if [ ! $TERM = dumb ]; then
         # see https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins
         zgen oh-my-zsh plugins/bower
         zgen oh-my-zsh plugins/brew
-        zgen oh-my-zsh plugins/colored-man
+        zgen oh-my-zsh plugins/colored-man-pages
         zgen oh-my-zsh plugins/docker
         zgen oh-my-zsh plugins/git
         zgen oh-my-zsh plugins/git-extras
