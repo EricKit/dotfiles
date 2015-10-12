@@ -25,3 +25,7 @@ Reload shell
 ***
 
 install autojump
+
+***
+##Commands##
+zgen update
