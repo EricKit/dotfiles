@@ -104,10 +104,6 @@ if [ ! $TERM = dumb ]; then
         zgen oh-my-zsh plugins/vundle
         zgen oh-my-zsh plugins/web-search
         zgen oh-my-zsh plugins/z
-<<<<<<< HEAD
-=======
-    zgen oh-my-zsh plugins/cp
->>>>>>> 00e8ee60da29f193dbefc8ab251e794dc116990c
 	zgen oh-my-zsh plugins/autojump
 	zgen oh-my-zsh plugins/command-not-found
 	zgen oh-my-zsh plugins/postgres
