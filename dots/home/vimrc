@@ -19,6 +19,7 @@ call vundle#begin()
     " Nice status bar for Vim
     " https://github.com/bling/vim-airline
     Plugin 'bling/vim-airline'
+    Plugin 'vim-airline/vim-airline-themes'
     " Highlights trailing whitespace in red and provides :FixWhitespace to fix it.
     " https://github.com/bronson/vim-trailing-whitespace
     Plugin 'bronson/vim-trailing-whitespace'
