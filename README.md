@@ -13,7 +13,7 @@
 ***
 
 ##Do for all##
-
+`sudo apt-get install zsh`
 `~/.dotfiles/install.zsh`
 
 Reload shell
