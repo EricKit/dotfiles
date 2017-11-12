@@ -13,8 +13,9 @@
 ***
 
 ##Do for all##
-`sudo apt-get install zsh`
-`~/.dotfiles/install.zsh`
+`sudo apt-get install zsh`  
+`pip install powerline-status`  
+`~/.dotfiles/install.zsh`  
 
 Reload shell
 
