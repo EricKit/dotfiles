@@ -1,4 +1,9 @@
 #!/bin/zsh
+
+alias ib="ionic build --prod --release; ionic cap sync;"
+alias ibt="ionic build; ionic cap sync;"
+code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+
 # Location of my dotfiles
 DOTFILES=$HOME/.dotfiles
 
@@ -33,43 +38,40 @@ export PAGER='less'
 AUTOENV_FILE_ENTER=.env
 AUTOENV_FILE_LEAVE=.envl
 
-# tmux plugin settings
-# this always starts tmux
-ZSH_TMUX_AUTOSTART=true
-ZSH_TMUX_AUTOSTART_ONCE=true
-ZSH_TMUX_FIXTERM=true
-ZSH_TMUX_AUTOQUIT=false
-
-# Powerlevel9k is the best theme for prompt, I like to keep it in dark gray colors
 DEFAULT_USER=eric
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-#POWERLEVEL9K_MODE='awesome-fontconfig'
+POWERLEVEL9K_MODE='nerdfont-complete' #Use with nerd fonts
+#POWERLEVEL9K_COLOR_SCHEME='light'
+#POWERLEVEL9K_MODE='awesome-fontconfig' #Use with powerline fonts
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status history time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status node_version background_jobs history time)
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
+#POWERLEVEL9K_SHORTEN_STRATEGY="truncate_to_unique"
+
 # Advanced `vcs` color customization
-POWERLEVEL9K_VCS_CLEAN_FOREGROUND='black'
-POWERLEVEL9K_VCS_CLEAN_BACKGROUND='green'
-POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND='black'
-POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND='130'
-POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='black'
-POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='yellow'
+# POWERLEVEL9K_VCS_CLEAN_FOREGROUND='black'
+# POWERLEVEL9K_VCS_CLEAN_BACKGROUND='green'
+# POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND='black'
+# POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND='130'
+# POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='black'
+# POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='yellow'
 
-POWERLEVEL9K_DIR_DEFAULT_FOREGROUND='black'
-POWERLEVEL9K_DIR_DEFAULT_BACKGROUND='white'
-POWERLEVEL9K_DIR_HOME_FOREGROUND='black'
-POWERLEVEL9K_DIR_HOME_BACKGROUND='152'
-POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND='black'
-POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='180'
+# POWERLEVEL9K_DIR_DEFAULT_FOREGROUND='black'
+# POWERLEVEL9K_DIR_DEFAULT_BACKGROUND='white'
+# POWERLEVEL9K_DIR_HOME_FOREGROUND='black'
+# POWERLEVEL9K_DIR_HOME_BACKGROUND='152'
+# POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND='black'
+# POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='180'
 
-POWERLEVEL9K_STATUS_BACKGROUND='238'
-POWERLEVEL9K_STATUS_FOREGROUND='252'
-POWERLEVEL9K_CONTEXT_BACKGROUND='240'
-POWERLEVEL9K_CONTEXT_FOREGROUND='252'
-POWERLEVEL9K_TIME_BACKGROUND='239'
-POWERLEVEL9K_TIME_FOREGROUND='252'
-POWERLEVEL9K_HISTORY_BACKGROUND='240'
-POWERLEVEL9K_HISTORY_FOREGROUND='252'
+# POWERLEVEL9K_STATUS_BACKGROUND='238'
+# POWERLEVEL9K_STATUS_FOREGROUND='252'
+POWERLEVEL9K_NODE_VERSION_BACKGROUND='63'
+# POWERLEVEL9K_CONTEXT_BACKGROUND='240'
+# POWERLEVEL9K_CONTEXT_FOREGROUND='252'
+# POWERLEVEL9K_TIME_BACKGROUND='022'
+# POWERLEVEL9K_TIME_FOREGROUND='252'
+# POWERLEVEL9K_HISTORY_BACKGROUND='017'
+# POWERLEVEL9K_HISTORY_FOREGROUND='252'
 
 # dumb terminal can be a vim dump terminal in that case don't try to load plugins
 if [ ! $TERM = dumb ]; then
@@ -109,7 +111,7 @@ if [ ! $TERM = dumb ]; then
         zgen oh-my-zsh plugins/vundle
         zgen oh-my-zsh plugins/web-search
         zgen oh-my-zsh plugins/z
-	    zgen oh-my-zsh plugins/autojump
+        zgen oh-my-zsh plugins/fasd
 	    zgen oh-my-zsh plugins/command-not-found
 	    zgen oh-my-zsh plugins/postgres
 	    zgen oh-my-zsh plugins/history-substring-search
@@ -117,13 +119,14 @@ if [ ! $TERM = dumb ]; then
 	    zgen oh-my-zsh plugins/osx
 	    zgen oh-my-zsh plugins/textmate
 	    zgen oh-my-zsh plugins/django
-
         # https://github.com/Tarrasch/zsh-autoenv
         zgen load Tarrasch/zsh-autoenv
         # https://github.com/zsh-users/zsh-completions
         zgen load zsh-users/zsh-completions src
         #https://github.com/zsh-users/zsh-syntax-highlighting
         zgen load zsh-users/zsh-syntax-highlighting
+
+        zgen load jimmijj/zsh-syntax-highlighting
 
         # my own plugins
         zgen load $DOTFILES/plugins/aliases
@@ -132,10 +135,9 @@ if [ ! $TERM = dumb ]; then
         zgen load $DOTFILES/plugins/tpm
 
         # load https://github.com/bhilburn/powerlevel9k theme for zsh
+#        zgen load wesbos/Cobalt2-iterm cobalt2
         zgen load bhilburn/powerlevel9k powerlevel9k
-
-        # It takes control, so load last
-        zgen load $DOTFILES/plugins/my-tmux
+        zgen load tarruda/zsh-autosuggestions
 
         zgen save
     fi
@@ -164,5 +166,3 @@ export VIRTUALENVWRAPPER_VIRTUALENV_ARGS='--no-site-packages'
 export PIP_VIRTUALENV_BASE=$WORKON_HOME
 # makes pip detect an active virtualenv and install to it
 export PIP_RESPECT_VIRTUALENV=true
-
-
