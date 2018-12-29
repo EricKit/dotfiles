@@ -25,7 +25,7 @@ Reload shell
 
 ***
 
-install autojump
+install fasd
 
 ***
 ##Commands##
