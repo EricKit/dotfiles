@@ -124,9 +124,7 @@ if [ ! $TERM = dumb ]; then
         zgen load zsh-users/zsh-completions src
         #https://github.com/zsh-users/zsh-syntax-highlighting
         zgen load zsh-users/zsh-syntax-highlighting
-
-        zgen load jimmijj/zsh-syntax-highlighting
-
+        zgen load zsh-users/zsh-autosuggestions
         # my own plugins
         zgen load $DOTFILES/plugins/aliases
         zgen load $DOTFILES/plugins/my-aws
@@ -136,7 +134,6 @@ if [ ! $TERM = dumb ]; then
         # load https://github.com/bhilburn/powerlevel9k theme for zsh
 #        zgen load wesbos/Cobalt2-iterm cobalt2
         zgen load bhilburn/powerlevel9k powerlevel9k
-        zgen load tarruda/zsh-autosuggestions
 
         zgen save
     fi
