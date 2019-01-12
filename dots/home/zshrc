@@ -1,8 +1,14 @@
 #!/bin/zsh
 
-alias ib="ionic build --prod --release; ionic cap sync;"
-alias ibt="ionic build; ionic cap sync;"
+alias ib="cp ~/projects/wolfpackplacesionic/src/app/models/config.deployed ~/projects/wolfpackplacesionic/src/app/models/config.ts; ionic build --prod --release; ionic cap sync;"
+alias ibt="cp ~/projects/wolfpackplacesionic/src/app/models/config.testing ~/projects/wolfpackplacesionic/src/app/models/config.ts; ionic build; ionic cap sync;"
 code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+
+function t() {
+  # Defaults to 3 levels deep, do more with `t 5` or `t 1`
+  # pass additional args after
+  tree -I '.git|node_modules|bower_components|.DS_Store' --dirsfirst --filelimit 15 -L ${1:-3} -aC $2
+}
 
 # Location of my dotfiles
 DOTFILES=$HOME/.dotfiles
