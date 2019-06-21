@@ -1,10 +1,10 @@
-# README #
+# README
 
-`git clone --recursive https://EricKit@bitbucket.org/EricKit/dotfiles.git .dotfiles`
+`git clone --recursive https://github.com/EricKit/dotfiles.git .dotfiles`
 
 ***
 
-##If you did not do recursive##
+## If you did not do recursive
 
 `git submodule init` 
 
@@ -12,7 +12,7 @@
 
 ***
 
-##Do for all##
+## Do for all
 `sudo apt-get install zsh`  
 `pip install powerline-status`  
 `~/.dotfiles/install.zsh`  
@@ -28,5 +28,5 @@ Reload shell
 install fasd
 
 ***
-##Commands##
+## Commands
 zgen update
