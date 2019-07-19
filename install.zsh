@@ -28,5 +28,5 @@ ln ~/.dotfiles/dots/home/zshrc                   ~/.zshrc
 
 
 # install powerline fonts
-~/.dotfiles/powerline-fonts/install.sh
-~/.dotfiles/nerd-fonts/install.sh Hack
+#~/.dotfiles/powerline-fonts/install.sh
+#~/.dotfiles/nerd-fonts/install.sh Hack
