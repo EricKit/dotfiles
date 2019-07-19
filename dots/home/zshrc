@@ -4,6 +4,16 @@ alias ib="cp ~/projects/wolfpackplacesionic/src/app/models/config.deployed ~/pro
 alias ibt="cp ~/projects/wolfpackplacesionic/src/app/models/config.testing ~/projects/wolfpackplacesionic/src/app/models/config.ts; ionic build; ionic cap sync;"
 code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
 
+export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+# avdmanager, sdkmanager
+export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
+
+# adb, logcat
+export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
+
+# emulator
+export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
+
 function t() {
   # Defaults to 3 levels deep, do more with `t 5` or `t 1`
   # pass additional args after
@@ -46,10 +56,10 @@ AUTOENV_FILE_LEAVE=.envl
 
 DEFAULT_USER=eric
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_MODE='nerdfont-complete' #Use with nerd fonts
+POWERLEVEL9K_MODE='default' #Use with nerd fonts
 #POWERLEVEL9K_COLOR_SCHEME='light'
 #POWERLEVEL9K_MODE='awesome-fontconfig' #Use with powerline fonts
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context dir dir_writable disk_usage  vcs)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir disk_usage  vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time)
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_to_unique"
@@ -69,13 +79,15 @@ POWERLEVEL9K_SHORTEN_STRATEGY="truncate_to_unique"
 # POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND='black'
 # POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='180'
 
-# POWERLEVEL9K_STATUS_BACKGROUND='238'
-# POWERLEVEL9K_STATUS_FOREGROUND='252'
+POWERLEVEL9K_STATUS_OK_BACKGROUND='233'
+POWERLEVEL9K_STATUS_OK_FOREGROUND='084'
+POWERLEVEL9K_STATUS_ERROR_BACKGROUND='233'
+POWERLEVEL9K_STATUS_ERROR_FOREGROUND='196'
 POWERLEVEL9K_NODE_VERSION_BACKGROUND='63'
-# POWERLEVEL9K_CONTEXT_BACKGROUND='240'
-# POWERLEVEL9K_CONTEXT_FOREGROUND='252'
-# POWERLEVEL9K_TIME_BACKGROUND='022'
-# POWERLEVEL9K_TIME_FOREGROUND='252'
+#POWERLEVEL9K_CONTEXT_BACKGROUND='253'
+#POWERLEVEL9K_CONTEXT_FOREGROUND='084'
+POWERLEVEL9K_TIME_BACKGROUND='233'
+POWERLEVEL9K_TIME_FOREGROUND='084'
 # POWERLEVEL9K_HISTORY_BACKGROUND='017'
 # POWERLEVEL9K_HISTORY_FOREGROUND='252'
 
