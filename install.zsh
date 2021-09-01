@@ -18,6 +18,7 @@ ln ~/.dotfiles/dots/home/gitignore_global        ~/.gitignore_global
 ln ~/.dotfiles/dots/home/tmux.conf               ~/.tmux.conf
 ln ~/.dotfiles/dots/home/vimrc                   ~/.vimrc
 ln ~/.dotfiles/dots/home/zshrc                   ~/.zshrc
+
 mkdir ~/.vim/colors
 ln ~/.dotfiles/monokai.vim                       ~/.vim/colors/monokai.vim
 
