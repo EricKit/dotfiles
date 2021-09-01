@@ -119,7 +119,7 @@ if [ ! $TERM = dumb ]; then
         zgen oh-my-zsh plugins/git
         zgen oh-my-zsh plugins/git-extras
         zgen oh-my-zsh plugins/gitignore
-        zgen oh-my-zsh plugins/go
+        zgen oh-my-zsh plugins/goLang
         zgen oh-my-zsh plugins/node
         zgen oh-my-zsh plugins/npm
         zgen oh-my-zsh plugins/osx
