@@ -4,14 +4,6 @@
 
 ***
 
-## If you did not do recursive
-
-`git submodule init`
-
-`git submodule update`
-
-***
-
 ## Do for all
 
 `sudo apt-get install zsh`  
