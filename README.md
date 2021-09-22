@@ -10,15 +10,17 @@
 `pip install powerline-status`  
 `~/.dotfiles/install.zsh`  
 
-Reload shell
+Close and reopen shell or type `source ~/.zshrc`
 
 `vundle-update`
 
-`brew-essentials` mac only
+## For Mac
 
-***
+`brew-essentials`
 
-install fasd
+## Do for all
+
+install fasd (different per OS)
 
 ***
 
@@ -26,7 +28,7 @@ install fasd
 
 zgen update
 
-## Hyper
+## Hyper Setup
 
 fontFamily: '"Hack Nerd Font", Menlo, "DejaVu Sans Mono", Consolas, "Lucida Console", monospace',
 plugins: ["hyper-material-theme", 'hypercwd', 'hyper-search', 'hyperline'],
