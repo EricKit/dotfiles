@@ -137,7 +137,6 @@ if [ ! $TERM = dumb ]; then
 	    zgen oh-my-zsh plugins/cp
 	    zgen oh-my-zsh plugins/osx
 	    zgen oh-my-zsh plugins/textmate
-	    zgen oh-my-zsh plugins/django
         # https://github.com/Tarrasch/zsh-autoenv
         zgen load Tarrasch/zsh-autoenv
         # https://github.com/zsh-users/zsh-completions
