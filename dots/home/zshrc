@@ -4,6 +4,8 @@ alias ib="cp ~/projects/wolfpackplacesionic/src/app/models/config.deployed ~/pro
 alias ibt="cp ~/projects/wolfpackplacesionic/src/app/models/config.testing ~/projects/wolfpackplacesionic/src/app/models/config.ts; ionic build; ionic cap sync;"
 code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
 
+export ZSH="$HOME/.oh-my-zsh"
+
 export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
 # avdmanager, sdkmanager
 export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
@@ -13,15 +15,6 @@ export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
 
 # emulator
 export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
-
-# poetry
-export PATH=$PATH:$HOME/.poetry/bin
-
-function t() {
-  # Defaults to 3 levels deep, do more with `t 5` or `t 1`
-  # pass additional args after
-  tree -I '.git|node_modules|bower_components|.DS_Store' --dirsfirst --filelimit 15 -L ${1:-3} -aC $2
-}
 
 # Location of my dotfiles
 DOTFILES=$HOME/.dotfiles
@@ -34,135 +27,55 @@ path=(
 )
 typeset -U path
 
-# if you want red dots to be displayed while waiting for completion
-COMPLETION_WAITING_DOTS="true"
-
-# change the size of history files
-export HISTSIZE=32768;
-export HISTFILESIZE=$HISTSIZE;
-
-# Shell
-export CLICOLOR=1
-export EDITOR='vim'
-export PAGER='less'
-
-# Homebrew
-# This is one of examples why I want to keep my dotfiles private
-#export HOMEBREW_GITHUB_API_TOKEN=MY_GITHUB_TOKEN
-#export HOMEBREW_CASK_OPTS="--appdir=/Applications"
-
-# Autoenv https://github.com/Tarrasch/zsh-autoenv
-# Great plugin to automatically modify path when it sees .env file
-# I use it for example to automatically setup docker/rbenv/pyenv environments
-AUTOENV_FILE_ENTER=.env
-AUTOENV_FILE_LEAVE=.envl
-
+ZSH_THEME="powerlevel10k/powerlevel10k"
 DEFAULT_USER=eric
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_MODE='default' #Use with nerd fonts
+POWERLEVEL9K_MODE='default'
 #POWERLEVEL9K_COLOR_SCHEME='light'
 #POWERLEVEL9K_MODE='awesome-fontconfig' #Use with powerline fonts
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir disk_usage  vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time)
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
 
-# Advanced `vcs` color customization
-# POWERLEVEL9K_VCS_CLEAN_FOREGROUND='black'
-# POWERLEVEL9K_VCS_CLEAN_BACKGROUND='green'
-# POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND='black'
-# POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND='130'
-# POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='black'
-# POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='yellow'
+# POWERLEVEL9K_STATUS_OK_BACKGROUND='233'
+# POWERLEVEL9K_STATUS_OK_FOREGROUND='084'
+# POWERLEVEL9K_STATUS_ERROR_BACKGROUND='233'
+# POWERLEVEL9K_STATUS_ERROR_FOREGROUND='196'
+# POWERLEVEL9K_NODE_VERSION_BACKGROUND='63'
+# POWERLEVEL9K_TIME_BACKGROUND='233'
+# POWERLEVEL9K_TIME_FOREGROUND='084'
 
-# POWERLEVEL9K_DIR_DEFAULT_FOREGROUND='black'
-# POWERLEVEL9K_DIR_DEFAULT_BACKGROUND='white'
-# POWERLEVEL9K_DIR_HOME_FOREGROUND='black'
-# POWERLEVEL9K_DIR_HOME_BACKGROUND='152'
-# POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND='black'
-# POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='180'
 
-POWERLEVEL9K_STATUS_OK_BACKGROUND='233'
-POWERLEVEL9K_STATUS_OK_FOREGROUND='084'
-POWERLEVEL9K_STATUS_ERROR_BACKGROUND='233'
-POWERLEVEL9K_STATUS_ERROR_FOREGROUND='196'
-POWERLEVEL9K_NODE_VERSION_BACKGROUND='63'
-#POWERLEVEL9K_CONTEXT_BACKGROUND='253'
-#POWERLEVEL9K_CONTEXT_FOREGROUND='084'
-POWERLEVEL9K_TIME_BACKGROUND='233'
-POWERLEVEL9K_TIME_FOREGROUND='084'
-# POWERLEVEL9K_HISTORY_BACKGROUND='017'
-# POWERLEVEL9K_HISTORY_FOREGROUND='252'
+plugins=(brew colored-man-pages git git-extras gitignore node npm
+        macos pip python sudo urltools web-search fasd command-not-found
+	      postgres history-substring-search cp zsh-syntax-highlighting
+        zsh-autosuggestions)
 
-# dumb terminal can be a vim dump terminal in that case don't try to load plugins
-if [ ! $TERM = dumb ]; then
-    ZGEN_AUTOLOAD_COMPINIT=true
+alias zshconfig="mate ~/.zshrc"
+alias sssh="ssh 192.168.40.55"
 
-    # If user is root it can have some issues with access to competition files
-    if [[ "${USER}" == "root" ]]; then
-        ZGEN_AUTOLOAD_COMPINIT=false
-    fi
-
-    # load zgen
-    source $DOTFILES/zgen/zgen.zsh
-
-    # configure zgen
-    if ! zgen saved; then
-
-        # zgen will load oh-my-zsh and download it if required
-        zgen oh-my-zsh
-
-        # list of plugins from zsh I use
-        # see https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins
-        zgen oh-my-zsh plugins/bower
-        zgen oh-my-zsh plugins/brew
-        zgen oh-my-zsh plugins/colored-man-pages
-        zgen oh-my-zsh plugins/git
-        zgen oh-my-zsh plugins/git-extras
-        zgen oh-my-zsh plugins/gitignore
-        zgen oh-my-zsh plugins/goLang
-        zgen oh-my-zsh plugins/node
-        zgen oh-my-zsh plugins/npm
-        zgen oh-my-zsh plugins/osx
-        zgen oh-my-zsh plugins/pip
-        zgen oh-my-zsh plugins/python
-        zgen oh-my-zsh plugins/sudo
-        zgen oh-my-zsh plugins/tmuxinator
-        zgen oh-my-zsh plugins/urltools
-        zgen oh-my-zsh plugins/vundle
-        zgen oh-my-zsh plugins/web-search
-        zgen oh-my-zsh plugins/fasd
-	    zgen oh-my-zsh plugins/command-not-found
-	    zgen oh-my-zsh plugins/postgres
-	    zgen oh-my-zsh plugins/history-substring-search
-	    zgen oh-my-zsh plugins/cp
-	    zgen oh-my-zsh plugins/osx
-	    zgen oh-my-zsh plugins/textmate
-        # https://github.com/Tarrasch/zsh-autoenv
-        zgen load Tarrasch/zsh-autoenv
-        # https://github.com/zsh-users/zsh-completions
-        zgen load zsh-users/zsh-completions src
-        #https://github.com/zsh-users/zsh-syntax-highlighting
-        zgen load zsh-users/zsh-syntax-highlighting
-
-        zgen load jimmijj/zsh-syntax-highlighting
-
-        # my own plugins
-        zgen load $DOTFILES/plugins/aliases
-        zgen load $DOTFILES/plugins/my-aws
-        zgen load $DOTFILES/plugins/my-brew
-        zgen load $DOTFILES/plugins/tpm
-
-        # load https://github.com/bhilburn/powerlevel9k theme for zsh
-#        zgen load wesbos/Cobalt2-iterm cobalt2
-        zgen load bhilburn/powerlevel9k powerlevel9k
-        zgen load tarruda/zsh-autosuggestions
-
-        zgen save
-    fi
-
-    # Configure vundle
-    vundle-init
-fi
+brew-essentials() {
+  brew install autojump
+  brew install cloc
+  brew install cmake
+  brew install coreutils
+  brew install ctags
+  brew install progress
+  brew install git
+  brew install httpie
+  brew install icdiff
+  brew install lnav
+  brew install ncdu
+  brew install p7zip
+  brew install pstree
+  brew install the_silver_searcher
+  brew install vim
+  brew tap homebrew/cask-fonts
+  brew install --cask font-jetbrains-mono
+  brew isntall fasd
+  brew install watch
+  brew install zsh
+}
 
 # additional configuration for zsh
 # Remove the history (fc -l) command from the history list when invoked.
@@ -176,15 +89,19 @@ setopt printexitvalue
 # Do not share history
 setopt no_share_history
 
-# set where virutal environments will live
-export WORKON_HOME=$HOME/.virtualenvs
-# ensure all new environments are isolated from the site-packages directory
-export VIRTUALENVWRAPPER_VIRTUALENV_ARGS='--no-site-packages'
-# use the same directory for virtualenvs as virtualenvwrapper
-export PIP_VIRTUALENV_BASE=$WORKON_HOME
-# makes pip detect an active virtualenv and install to it
-export PIP_RESPECT_VIRTUALENV=true
+# if you want red dots to be displayed while waiting for completion
+COMPLETION_WAITING_DOTS="true"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# change the size of history files
+export HISTSIZE=32768;
+export HISTFILESIZE=$HISTSIZE;
+
+# Shell
+export CLICOLOR=1
+export EDITOR='vim'
+export PAGER='less'
+
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+source $ZSH/oh-my-zsh.sh

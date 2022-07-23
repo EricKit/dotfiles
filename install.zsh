@@ -8,29 +8,22 @@ fi
 # remove old dot files
 rm ~/.gitconfig
 rm ~/.gitignore_global
-rm ~/.tmux.conf
 rm ~/.vimrc
 rm ~/.zshrc
 
 # link new dot files
 ln ~/.dotfiles/dots/home/gitconfig               ~/.gitconfig
 ln ~/.dotfiles/dots/home/gitignore_global        ~/.gitignore_global
-ln ~/.dotfiles/dots/home/tmux.conf               ~/.tmux.conf
 ln ~/.dotfiles/dots/home/vimrc                   ~/.vimrc
 ln ~/.dotfiles/dots/home/zshrc                   ~/.zshrc
 
 mkdir ~/.vim/colors
-ln ~/.dotfiles/monokai.vim                       ~/.vim/colors/monokai.vim
+ln ~/.dotfiles/colors/gruvbox.vim                ~/.vim/colors/gruvbox.vim
 
+# Install oh-my-zsh
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# Do special to sync sublime settings on OS X
-#if [[ "$OSTYPE" =~ "darwin" ]]; then
-#  rm ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
-
-#  ln -s ~/.dotfiles/settings/SublimeText/User      ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
-#fi
-
-
-# install powerline fonts
-#~/.dotfiles/powerline-fonts/install.sh
-#~/.dotfiles/nerd-fonts/install.sh Hack
+# Install custom plugins
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k

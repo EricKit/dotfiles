@@ -7,26 +7,21 @@
 ## Do for all
 
 `sudo apt-get install zsh`  
-`pip install powerline-status`  
 `~/.dotfiles/install.zsh`  
 
-Close and reopen shell or type `source ~/.zshrc`
+Close and reopen shell or type 
 
-`vundle-update`
+`source ~/.zshrc`
 
 ## For Mac
 
 `brew-essentials`
 
-## Do for all
+## Do for Non-Mac
 
 install fasd (different per OS)
 
 ***
-
-## Commands
-
-zgen update
 
 ## Hyper Setup
 
