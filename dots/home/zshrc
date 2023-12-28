@@ -22,6 +22,8 @@ DOTFILES=$HOME/.dotfiles
 # Update PATH
 path=(
     /usr/local/{bin,sbin}
+    /bin/sbin
+    /sbin
     $DOTFILES/scripts
     $path
 )
