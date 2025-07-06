@@ -111,3 +111,4 @@ source $ZSH/oh-my-zsh.sh
 
 # Load Angular CLI autocompletion.
 source <(ng completion script)
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
