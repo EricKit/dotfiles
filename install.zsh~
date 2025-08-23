@@ -10,14 +10,12 @@ rm ~/.gitconfig
 rm ~/.gitignore_global
 rm ~/.vimrc
 rm ~/.zshrc
-rm ~/.dircolors
 
 # link new dot files
 ln ~/.dotfiles/dots/home/gitconfig               ~/.gitconfig
 ln ~/.dotfiles/dots/home/gitignore_global        ~/.gitignore_global
 ln ~/.dotfiles/dots/home/vimrc                   ~/.vimrc
 ln ~/.dotfiles/dots/home/zshrc                   ~/.zshrc
-ln ~/.dotfiles/dots/home/dircolors               ~/.dircolors
 
 mkdir ~/.vim/colors
 ln ~/.dotfiles/colors/gruvbox.vim                ~/.vim/colors/gruvbox.vim

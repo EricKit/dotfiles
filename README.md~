@@ -7,9 +7,6 @@
 ## Do for all
 
 `~/.dotfiles/install.zsh`
-Open VI: `:PlugInstall`
-Install NVM and LTS Node
-
 
 ## Mac install FASD
 
