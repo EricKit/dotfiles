@@ -15,6 +15,7 @@ echo 'eval "$(fasder --init auto aliases)"' >> ~/.zshrc
 
 ## Do for Non-Mac
 
+brew install zoxide
 install fasd (different per OS)
 
 ---

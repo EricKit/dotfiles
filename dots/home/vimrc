@@ -10,7 +10,6 @@
 "	 for MS-Windows:  $VIM\_vimrc
 "	      for Haiku:  ~/config/settings/vim/vimrc
 "	    for OpenVMS:  sys$login:.vimrc
-
 call plug#begin()
 Plug 'morhetz/gruvbox'
 
@@ -214,7 +213,7 @@ endif
 " Requires 'textDocument/selectionRange' support of language server.
 nmap <silent> <C-s> <Plug>(coc-range-select)
 xmap <silent> <C-s> <Plug>(coc-range-select)
-
+if exists('*CocActionAsync')
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocActionAsync('format')
 
@@ -223,7 +222,6 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
-
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
@@ -246,7 +244,7 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
-
+endif
 
 " Tab Options
 set shiftwidth=2

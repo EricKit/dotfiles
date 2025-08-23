@@ -112,6 +112,36 @@ source $ZSH/oh-my-zsh.sh
 # Load Angular CLI autocompletion.
 source <(ng completion script)
 export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-eval "$(fasder --init auto aliases)"
-eval "$(fasder --init auto aliases)"
-eval "$(fasder --init auto aliases)"
+eval "$(zoxide init zsh)"
+
+# Enable vi mode
+bindkey -v
+export KEYTIMEOUT=1
+# Enable vi mode
+bindkey -v
+export KEYTIMEOUT=1
+
+# Change cursor shape depending on mode
+function zle-keymap-select {
+  if [[ $KEYMAP == vicmd ]]; then
+    # NORMAL mode → block cursor
+    echo -ne '\e[2 q'
+  else
+    # INSERT mode → beam (bar) cursor
+    echo -ne '\e[6 q'
+  fi
+  zle reset-prompt
+}
+zle -N zle-keymap-select
+
+# Set cursor shape on shell start
+function zle-line-init {
+  echo -ne '\e[6 q'   # start in INSERT mode (beam)
+}
+zle -N zle-line-init
+
+# Restore cursor on exit
+function reset-cursor {
+  echo -ne '\e[6 q'
+}
+precmd_functions+=(reset-cursor)
