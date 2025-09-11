@@ -1,147 +1,109 @@
 #!/bin/zsh
 
-alias ib="cp ~/projects/wolfpackplacesionic/src/app/models/config.deployed ~/projects/wolfpackplacesionic/src/app/models/config.ts; ionic build --prod --release; ionic cap sync;"
-alias ibt="cp ~/projects/wolfpackplacesionic/src/app/models/config.testing ~/projects/wolfpackplacesionic/src/app/models/config.ts; ionic build; ionic cap sync;"
-code () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+# OS detect
+case "$OSTYPE" in
+  darwin*) IS_MAC=1 ;;
+  linux*)  IS_LINUX=1 ;;
+esac
 
+# VS Code launcher (mac only)
+if [[ -n $IS_MAC ]]; then
+  code() { VSCODE_CWD="$PWD" open -n -b com.microsoft.VSCode --args "$@"; }
+fi
+
+# Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+plugins=(
+  git gitignore sudo colored-man-pages
+  history-substring-search
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+# Linux-only plugin
+if [[ -n $IS_LINUX ]]; then
+  plugins+=(command-not-found)
+fi
 
-export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
-# avdmanager, sdkmanager
-export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
+source "$ZSH/oh-my-zsh.sh"
+[[ -r ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# adb, logcat
-export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-
-# emulator
-export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
-
-# Location of my dotfiles
-DOTFILES=$HOME/.dotfiles
-
-# Update PATH
+# Dotfiles + PATH
+DOTFILES="$HOME/.dotfiles"
 path=(
-    /usr/local/{bin,sbin}
-    /bin/sbin
-    /sbin
-    $DOTFILES/scripts
-    $path
+  "$DOTFILES/scripts"
+  /usr/local/bin /usr/local/sbin
+  /usr/bin /usr/sbin /bin /sbin
+  "$HOME/.local/bin"
+  $path
 )
 typeset -U path
 
-ZSH_THEME="powerlevel10k/powerlevel10k"
-DEFAULT_USER=eric
-POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_MODE='default'
-#POWERLEVEL9K_COLOR_SCHEME='light'
-#POWERLEVEL9K_MODE='awesome-fontconfig' #Use with powerline fonts
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir disk_usage  vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time)
-POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
+# Homebrew/Ruby (mac only)
+if [[ -n $IS_MAC ]]; then
+  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+  export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+  # Prefer GNU coreutils ls if installed
+  command -v gls >/dev/null && alias ls='gls --color=auto'
+fi
 
-# POWERLEVEL9K_STATUS_OK_BACKGROUND='233'
-# POWERLEVEL9K_STATUS_OK_FOREGROUND='084'
-# POWERLEVEL9K_STATUS_ERROR_BACKGROUND='233'
-# POWERLEVEL9K_STATUS_ERROR_FOREGROUND='196'
-# POWERLEVEL9K_NODE_VERSION_BACKGROUND='63'
-# POWERLEVEL9K_TIME_BACKGROUND='233'
-# POWERLEVEL9K_TIME_FOREGROUND='084'
+# GNU ls colors (dircolors)
+eval "$(dircolors -b ~/.dircolors 2>/dev/null || true)"
 
+# History & shell opts
+setopt histnostore histreduceblanks ignoreeof printexitvalue no_share_history
+COMPLETION_WAITING_DOTS=true
+export HISTSIZE=32768 HISTFILESIZE=$HISTSIZE
+export CLICOLOR=1 EDITOR=vim PAGER=less
 
-plugins=(brew colored-man-pages git git-extras gitignore node npm
-        macos pip python sudo urltools web-search fasd command-not-found
-	      postgres history-substring-search cp zsh-syntax-highlighting
-        zsh-autosuggestions)
+# NVM (if present)
+for NVM_DIR in "${XDG_CONFIG_HOME:-$HOME/.config}/nvm" "$HOME/.nvm"; do
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    export NVM_DIR
+    . "$NVM_DIR/nvm.sh"
+    break
+  fi
+done
 
-alias zshconfig="mate ~/.zshrc"
-alias sssh="ssh 192.168.40.55"
+# zoxide (if present)
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 
+# fzf (brew-installed)
+if command -v fzf >/dev/null; then
+  [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+fi
+# fzf fallbacks (Debian/Ubuntu packages)
+[[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+[[ -f /usr/share/doc/fzf/examples/completion.zsh    ]] && source /usr/share/doc/fzf/examples/completion.zsh
+
+# Completion init (fast/quiet)
+autoload -Uz compinit
+compinit -C -u
+
+# Helpers: installers (mac via Homebrew; Debian/Ubuntu via apt)
 brew-essentials() {
-  brew install autojump
-  brew install cloc
-  brew install cmake
-  brew install coreutils
-  brew install ctags
-  brew install progress
-  brew install git
-  brew install httpie
-  brew install icdiff
-  brew install lnav
-  brew install ncdu
-  brew install p7zip
-  brew install pstree
-  brew install the_silver_searcher
-  brew install vim
+  brew install \
+    coreutils git fzf ncdu lnav p7zip watch zsh \
+    cloc httpie vim \
+    ripgrep fd bat htop \
+    cmake ctags
   brew tap homebrew/cask-fonts
   brew install --cask font-jetbrains-mono
-  brew isntall fasd
-  brew install watch
-  brew install zsh
+}
+apt-essentials() {
+  sudo apt update && sudo apt install -y \
+    git zsh vim htop ncdu lnav p7zip-full watch cloc httpie cmake universal-ctags \
+    ripgrep fzf fd-find bat
+  # Debian/Ubuntu alias fixes
+  command -v bat >/dev/null || { command -v batcat >/dev/null && alias bat='batcat'; }
+  command -v fd  >/dev/null || { command -v fdfind >/dev/null && alias fd='fdfind'; }
 }
 
-# additional configuration for zsh
-# Remove the history (fc -l) command from the history list when invoked.
-setopt histnostore
-# Remove superfluous blanks from each command line being added to the history list.
-setopt histreduceblanks
-# Do not exit on end-of-file. Require the use of exit or logout instead.
-setopt ignoreeof
-# Print the exit value of programs with non-zero exit status.
-setopt printexitvalue
-# Do not share history
-setopt no_share_history
-
-# if you want red dots to be displayed while waiting for completion
-COMPLETION_WAITING_DOTS="true"
-
-# change the size of history files
-export HISTSIZE=32768;
-export HISTFILESIZE=$HISTSIZE;
-
-# Shell
-export CLICOLOR=1
-export EDITOR='vim'
-export PAGER='less'
-
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-
-source $ZSH/oh-my-zsh.sh
-
-
-# Load Angular CLI autocompletion.
-source <(ng completion script)
-export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-eval "$(zoxide init zsh)"
-
-# Enable vi mode
-bindkey -v
-export KEYTIMEOUT=1
-# Enable vi mode
-bindkey -v
-export KEYTIMEOUT=1
-
-# Change cursor shape depending on mode
-function zle-keymap-select {
-  if [[ $KEYMAP == vicmd ]]; then
-    # NORMAL mode → block cursor
-    echo -ne '\e[2 q'
-  else
-    # INSERT mode → beam (bar) cursor
-    echo -ne '\e[6 q'
+# One-shot bootstrap dispatcher
+bootstrap() {
+  if [[ -n $IS_MAC ]]; then
+    command -v brew >/dev/null && brew-essentials
+  elif [[ -n $IS_LINUX ]]; then
+    apt-essentials
   fi
-  zle reset-prompt
 }
-zle -N zle-keymap-select
-
-# Set cursor shape on shell start
-function zle-line-init {
-  echo -ne '\e[6 q'   # start in INSERT mode (beam)
-}
-zle -N zle-line-init
-
-# Restore cursor on exit
-function reset-cursor {
-  echo -ne '\e[6 q'
-}
-precmd_functions+=(reset-cursor)

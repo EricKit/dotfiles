@@ -1,0 +1,33 @@
+# Basics
+set -g mouse on
+set -g history-limit 100000
+set -g default-terminal "tmux-256color"
+set -ga terminal-overrides ",xterm-256color:Tc,tmux-256color:Tc"
+
+# Pane nav + splits in current dir
+bind -r h select-pane -L
+bind -r j select-pane -D
+bind -r k select-pane -U
+bind -r l select-pane -R
+bind '"' split-window -v -c "#{pane_current_path}"
+bind %  split-window -h -c "#{pane_current_path}"
+bind r  source-file ~/.tmux.conf \; display "tmux reloaded"
+
+# Vi-style copy mode + system clipboard
+setw -g mode-keys vi
+bind -T copy-mode-vi v send -X begin-selection
+bind -T copy-mode-vi y send -X copy-pipe-and-cancel "#{@copycmd}"
+
+# Detect clipboard tool once (macOS pbcopy / Linux wl-copy or xclip)
+run-shell -b 'command -v pbcopy >/dev/null && tmux set -g @copycmd "pbcopy"'
+run-shell -b 'command -v wl-copy >/dev/null && tmux set -g @copycmd "wl-copy"'
+run-shell -b 'command -v xclip  >/dev/null && tmux set -g @copycmd "xclip -selection clipboard"'
+# fallback (no clipboard tool)
+run-shell -b 'tmux show -g @copycmd 2>/dev/null | grep -q @copycmd || tmux set -g @copycmd "cat >/dev/null"'
+
+# Quality-of-life
+set -g escape-time 0          # reduce lag for vi-mode Esc
+set -g renumber-windows on    # close gap after killing windows
+set -g base-index 1           # windows start at 1 (not 0)
+setw -g pane-base-index 1     # panes start at 1
+set -g bell-action none       # no bell flash/noise

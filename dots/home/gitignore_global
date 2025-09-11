@@ -1,2 +1,47 @@
-*~
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.Trash-*
+.nfs*
+
+# Vim / Neovim
+*~
+*.swp
+*.swo
+*.swn
+.session
+
+# Zsh / Shell
+.zcompdump*
+.zsh_history
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Node / JS
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+*.log
+
+# Editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Misc
+.DS_Store
+.env

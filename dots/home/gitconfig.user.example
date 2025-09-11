@@ -1,0 +1,4 @@
+# Copy this to ~/.gitconfig.user and edit:
+[user]
+    name = Your Name
+    email = you@example.com
