@@ -17,14 +17,12 @@ if [[ -n "${IS_MAC:-}" ]]; then
   if ! command -v brew >/dev/null 2>&1; then
     echo "• Installing Homebrew…"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    # Add Homebrew to PATH for this session (Apple Silicon & Intel)
     [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
     [[ -x /usr/local/bin/brew   ]] && eval "$(/usr/local/bin/brew shellenv)"
   fi
   echo "• Installing base packages (mac)…"
   brew install zsh git curl vim fzf
 elif [[ -n "${IS_LINUX:-}" ]]; then
-  # Ensure apt exists (Ubuntu/Debian)
   if ! command -v apt >/dev/null 2>&1; then
     echo "This script expects apt (Ubuntu/Debian)." >&2; exit 1
   fi
@@ -44,7 +42,7 @@ if [[ "${SHELL:-}" != "$ZSH_PATH" ]]; then
   chsh -s "$ZSH_PATH" || echo "  (chsh may need logout/login or sudo)"
 fi
 
-# ---------- 2) UNSAFE: remove old dotfiles (as requested) ----------
+# ---------- 2) UNSAFE: remove old dotfiles ----------
 echo "• Removing old dotfiles (unsafe)…"
 rm -f "$HOME/.gitconfig" \
       "$HOME/.gitignore_global" \
@@ -80,7 +78,6 @@ if [[ ! -f "$HOME/.gitconfig.user" ]]; then
     email = $GIT_EMAIL
 EOF
 
-  # macOS: also include SourceTree difftool/mergetool
   if [[ -n "${IS_MAC:-}" ]]; then
     cat >> "$HOME/.gitconfig.user" <<'EOF'
 
@@ -104,7 +101,7 @@ if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
 fi
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
-# ---------- 6) OMZ plugins & theme ----------
+# ---------- 6) OMZ plugins & theme (clone directly; no submodules) ----------
 echo "• Ensuring OMZ plugins/theme…"
 clone_or_update() {
   local repo="$1" dest="$2"
@@ -130,22 +127,26 @@ if command -v vim >/dev/null 2>&1; then
   vim +PlugInstall +qall || true
 fi
 
-# ---------- 8) OS-aware essentials (call your functions from .zshrc) ----------
+# ---------- 8) OS-aware essentials ----------
 echo "• Installing essentials for this OS…"
 if [[ -n "${IS_MAC:-}" ]]; then
   # fzf keybindings (avoid touching rc files)
   if [[ -x "/opt/homebrew/opt/fzf/install" ]]; then
     /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish || true
   fi
-  # Ensure brew in PATH for this session (post-install shells)
+  # JetBrains Mono font
+  brew install --cask font-jetbrains-mono || true
+  # Ensure brew in PATH for this session
   [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)" || true
   [[ -x /usr/local/bin/brew   ]] && eval "$(/usr/local/bin/brew shellenv)"   || true
-  # Run your brew-essentials if defined
+  # Run your brew-essentials if defined in .zshrc
   zsh -i -c 'source ~/.zshrc >/dev/null 2>&1; command -v brew >/dev/null && type brew-essentials >/dev/null && brew-essentials || true'
 elif [[ -n "${IS_LINUX:-}" ]]; then
   # Nice-to-have: credential helper on Debian/Ubuntu
   sudo apt install -y git-credential-libsecret || true
-  # Run your apt-essentials if defined
+  # JetBrains Mono font (Ubuntu/Debian)
+  sudo apt install -y fonts-jetbrains-mono || true
+  # Run your apt-essentials if defined in .zshrc
   zsh -i -c 'source ~/.zshrc >/dev/null 2>&1; type apt-essentials >/dev/null && apt-essentials || true'
 fi
 

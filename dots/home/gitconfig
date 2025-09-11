@@ -41,6 +41,15 @@
     reflog = delta
     show = delta
 
+[tag]
+    sort = version:refname
+
+[help]
+    autocorrect = prompt
+
+[branch]
+    sort = -committerdate
+
 # 🔒 Load your private identity from a local file (not in the repo)
 [include]
     path = ~/.gitconfig.user
