@@ -47,7 +47,7 @@ typeset -U path
 # ─────────────────────────────
 if [[ -n $IS_MAC ]]; then
   if command -v brew >/dev/null; then
-    # Works for Apple Silicon (/opt/homebrew) and Intel (/usr/local)
+    # Prefer Homebrew’s own shellenv (handles Intel & Apple Silicon)
     eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv 2>/dev/null)"
   fi
   export PATH="/opt/homebrew/opt/ruby/bin:$PATH"

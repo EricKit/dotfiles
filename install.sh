@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 set -euo pipefail
 
 DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
@@ -11,9 +11,8 @@ case "$OSTYPE" in
   *) echo "Unsupported OS: $OSTYPE" >&2; exit 1 ;;
 esac
 
-# ---------- 0) Minimal bootstrap: package manager + base tools ----------
+# ---------- 0) Minimal bootstrap ----------
 if [[ -n "${IS_MAC:-}" ]]; then
-  # Install Homebrew if missing
   if ! command -v brew >/dev/null 2>&1; then
     echo "• Installing Homebrew…"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -32,7 +31,7 @@ elif [[ -n "${IS_LINUX:-}" ]]; then
   sudo apt install -y zsh git curl vim fzf ca-certificates
 fi
 
-# ---------- 1) Make zsh the default login shell ----------
+# ---------- 1) Make zsh default ----------
 if [[ "${SHELL:-}" != "$ZSH_PATH" ]]; then
   if [[ -n "${IS_LINUX:-}" ]] && ! grep -q "$ZSH_PATH" /etc/shells 2>/dev/null; then
     echo "• Adding $ZSH_PATH to /etc/shells (sudo)…"
@@ -42,7 +41,7 @@ if [[ "${SHELL:-}" != "$ZSH_PATH" ]]; then
   chsh -s "$ZSH_PATH" || echo "  (chsh may need logout/login or sudo)"
 fi
 
-# ---------- 2) UNSAFE: remove old dotfiles ----------
+# ---------- 2) Remove old dotfiles (unsafe) ----------
 echo "• Removing old dotfiles (unsafe)…"
 rm -f "$HOME/.gitconfig" \
       "$HOME/.gitignore_global" \
@@ -61,23 +60,24 @@ ln -snf "$DOTFILES/dots/home/zshrc"             "$HOME/.zshrc"
 ln -snf "$DOTFILES/dots/home/dircolors"         "$HOME/.dircolors"
 ln -snf "$DOTFILES/dots/home/tmux"              "$HOME/.tmux.conf"
 
-# Optional extra color scheme (if present in repo)
+# Ensure Vim state directories exist
+mkdir -p "$HOME/.vim/undo" "$HOME/.vim/backup" "$HOME/.vim/swap"
+
+# Optional color scheme
 if [[ -f "$DOTFILES/colors/gruvbox.vim" ]]; then
   ln -snf "$DOTFILES/colors/gruvbox.vim" "$HOME/.vim/colors/gruvbox.vim"
 fi
 
-# ---------- 4) Private git identity: prompt + create ~/.gitconfig.user ----------
+# ---------- 4) Git identity ----------
 if [[ ! -f "$HOME/.gitconfig.user" ]]; then
   echo "• Setting up your Git identity (~/.gitconfig.user)"
   read -r "?Enter your full name: " GIT_NAME
   read -r "?Enter your email address: " GIT_EMAIL
-
   cat > "$HOME/.gitconfig.user" <<EOF
 [user]
     name = $GIT_NAME
     email = $GIT_EMAIL
 EOF
-
   if [[ -n "${IS_MAC:-}" ]]; then
     cat >> "$HOME/.gitconfig.user" <<'EOF'
 
@@ -93,7 +93,7 @@ EOF
   echo "→ Created ~/.gitconfig.user"
 fi
 
-# ---------- 5) Install Oh My Zsh (unattended; keep our .zshrc) ----------
+# ---------- 5) Oh My Zsh ----------
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
   echo "• Installing Oh My Zsh…"
   export RUNZSH=no CHSH=no KEEP_ZSHRC=yes
@@ -101,7 +101,7 @@ if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
 fi
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
-# ---------- 6) OMZ plugins & theme (clone directly; no submodules) ----------
+# ---------- 6) OMZ plugins & theme ----------
 echo "• Ensuring OMZ plugins/theme…"
 clone_or_update() {
   local repo="$1" dest="$2"
@@ -119,34 +119,24 @@ clone_or_update https://github.com/zsh-users/zsh-autosuggestions \
 clone_or_update https://github.com/romkatv/powerlevel10k.git \
   "$ZSH_CUSTOM/themes/powerlevel10k"
 
-# ---------- 7) vim-plug + plugin install ----------
-echo "• Installing vim-plug and Vim plugins…"
+# ---------- 7) vim-plug ----------
+echo "• Installing vim-plug and plugins…"
 curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 if command -v vim >/dev/null 2>&1; then
   vim +PlugInstall +qall || true
 fi
 
-# ---------- 8) OS-aware essentials ----------
+# ---------- 8) OS essentials ----------
 echo "• Installing essentials for this OS…"
 if [[ -n "${IS_MAC:-}" ]]; then
-  # fzf keybindings (avoid touching rc files)
-  if [[ -x "/opt/homebrew/opt/fzf/install" ]]; then
-    /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish || true
-  fi
-  # JetBrains Mono font
+  [[ -x "/opt/homebrew/opt/fzf/install" ]] && /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc --no-bash --no-fish || true
   brew install --cask font-jetbrains-mono || true
-  # Ensure brew in PATH for this session
   [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)" || true
   [[ -x /usr/local/bin/brew   ]] && eval "$(/usr/local/bin/brew shellenv)"   || true
-  # Run your brew-essentials if defined in .zshrc
   zsh -i -c 'source ~/.zshrc >/dev/null 2>&1; command -v brew >/dev/null && type brew-essentials >/dev/null && brew-essentials || true'
 elif [[ -n "${IS_LINUX:-}" ]]; then
-  # Nice-to-have: credential helper on Debian/Ubuntu
-  sudo apt install -y git-credential-libsecret || true
-  # JetBrains Mono font (Ubuntu/Debian)
-  sudo apt install -y fonts-jetbrains-mono || true
-  # Run your apt-essentials if defined in .zshrc
+  sudo apt install -y git-credential-libsecret fonts-jetbrains-mono || true
   zsh -i -c 'source ~/.zshrc >/dev/null 2>&1; type apt-essentials >/dev/null && apt-essentials || true'
 fi
 
