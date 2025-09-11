@@ -87,7 +87,6 @@ brew-essentials() {
     cloc httpie vim \
     ripgrep fd bat htop \
     cmake ctags
-  brew tap homebrew/cask-fonts
   brew install --cask font-jetbrains-mono
 }
 apt-essentials() {
