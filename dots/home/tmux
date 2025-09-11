@@ -1,33 +1,63 @@
-# Basics
-set -g mouse on
-set -g history-limit 100000
-set -g default-terminal "tmux-256color"
-set -ga terminal-overrides ",xterm-256color:Tc,tmux-256color:Tc"
+##### Basics #####
+set -g mouse on                       # enable mouse support (pane resize, selection, scroll)
+set -g history-limit 100000           # large scrollback buffer
+set -g default-terminal "tmux-256color"    # advertise tmux-256color if available
+set -ga terminal-overrides ",xterm-256color:Tc,tmux-256color:Tc"  # truecolor override
 
-# Pane nav + splits in current dir
+##### Pane navigation + splits (current dir) #####
+# Vim-style movement with prefix
 bind -r h select-pane -L
 bind -r j select-pane -D
 bind -r k select-pane -U
 bind -r l select-pane -R
+
+# Also allow Ctrl-h/j/k/l without prefix
+bind -n C-h select-pane -L
+bind -n C-j select-pane -D
+bind -n C-k select-pane -U
+bind -n C-l select-pane -R
+
+# Split panes, stay in current working directory
 bind '"' split-window -v -c "#{pane_current_path}"
 bind %  split-window -h -c "#{pane_current_path}"
+
+# Reload config
 bind r  source-file ~/.tmux.conf \; display "tmux reloaded"
 
-# Vi-style copy mode + system clipboard
-setw -g mode-keys vi
+##### Vi-style copy mode + clipboard integration #####
+setw -g mode-keys vi                  # use vi keys in copy-mode
 bind -T copy-mode-vi v send -X begin-selection
 bind -T copy-mode-vi y send -X copy-pipe-and-cancel "#{@copycmd}"
 
-# Detect clipboard tool once (macOS pbcopy / Linux wl-copy or xclip)
-run-shell -b 'command -v pbcopy >/dev/null && tmux set -g @copycmd "pbcopy"'
-run-shell -b 'command -v wl-copy >/dev/null && tmux set -g @copycmd "wl-copy"'
-run-shell -b 'command -v xclip  >/dev/null && tmux set -g @copycmd "xclip -selection clipboard"'
-# fallback (no clipboard tool)
-run-shell -b 'tmux show -g @copycmd 2>/dev/null | grep -q @copycmd || tmux set -g @copycmd "cat >/dev/null"'
+# Detect clipboard command (macOS pbcopy / Linux wl-copy or xclip), else fallback
+run-shell '
+if command -v pbcopy >/dev/null 2>&1; then
+  tmux set -g @copycmd "pbcopy"
+elif command -v wl-copy >/dev/null 2>&1; then
+  tmux set -g @copycmd "wl-copy"
+elif command -v xclip >/dev/null 2>&1; then
+  tmux set -g @copycmd "xclip -selection clipboard"
+else
+  tmux set -g @copycmd "cat >/dev/null"
+fi
+'
 
-# Quality-of-life
-set -g escape-time 0          # reduce lag for vi-mode Esc
-set -g renumber-windows on    # close gap after killing windows
-set -g base-index 1           # windows start at 1 (not 0)
+##### Quality-of-life #####
+set -g escape-time 0          # no ESC delay in vi mode
+set -g renumber-windows on    # renumber after closing windows
+set -g base-index 1           # windows start at 1
 setw -g pane-base-index 1     # panes start at 1
-set -g bell-action none       # no bell flash/noise
+set -g bell-action none       # disable bell flash/noise
+
+##### Extras #####
+# Synchronize panes toggle (send input to all panes at once)
+bind S setw synchronize-panes \; display "sync-panes: #{?pane_synchronized,on,off}"
+
+# Resize panes with Vim-like keys (holdable)
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 2
+bind -r K resize-pane -U 2
+bind -r L resize-pane -R 5
+
+# Enable OSC 52 clipboard integration if supported (tmux ≥3.2)
+set -g set-clipboard on
