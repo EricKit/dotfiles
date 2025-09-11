@@ -1,17 +1,23 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
+# ─────────────────────────────
 # OS detect
+# ─────────────────────────────
 case "$OSTYPE" in
   darwin*) IS_MAC=1 ;;
   linux*)  IS_LINUX=1 ;;
 esac
 
+# ─────────────────────────────
 # VS Code launcher (mac only)
+# ─────────────────────────────
 if [[ -n $IS_MAC ]]; then
   code() { VSCODE_CWD="$PWD" open -n -b com.microsoft.VSCode --args "$@"; }
 fi
 
-# Oh My Zsh
+# ─────────────────────────────
+# Oh My Zsh + Theme + Plugins
+# ─────────────────────────────
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(
@@ -20,7 +26,7 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
-# Linux-only plugin
+# Linux-only: command-not-found integration
 if [[ -n $IS_LINUX ]]; then
   plugins+=(command-not-found)
 fi
@@ -28,77 +34,100 @@ fi
 source "$ZSH/oh-my-zsh.sh"
 [[ -r ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# Dotfiles + PATH
+# ─────────────────────────────
+# PATH & dotfiles
+# ─────────────────────────────
 DOTFILES="$HOME/.dotfiles"
-path=(
-  "$DOTFILES/scripts"
-  /usr/local/bin /usr/local/sbin
-  /usr/bin /usr/sbin /bin /sbin
-  "$HOME/.local/bin"
-  $path
-)
+# Put ~/.local/bin first (Linux-friendly), then repo scripts, then system dirs
+path=("$HOME/.local/bin" "$DOTFILES/scripts" /usr/local/bin /usr/local/sbin /usr/bin /usr/sbin /bin /sbin $path)
 typeset -U path
 
-# Homebrew/Ruby (mac only)
+# ─────────────────────────────
+# Homebrew (mac): robust shellenv + Ruby path
+# ─────────────────────────────
 if [[ -n $IS_MAC ]]; then
-  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+  if command -v brew >/dev/null; then
+    # Works for Apple Silicon (/opt/homebrew) and Intel (/usr/local)
+    eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv 2>/dev/null)"
+  fi
   export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
   # Prefer GNU coreutils ls if installed
   command -v gls >/dev/null && alias ls='gls --color=auto'
 fi
 
-# GNU ls colors (dircolors)
+# ─────────────────────────────
+# Colors (dircolors)
+# ─────────────────────────────
 eval "$(dircolors -b ~/.dircolors 2>/dev/null || true)"
 
-# History & shell opts
+# ─────────────────────────────
+# History & shell options
+# ─────────────────────────────
 setopt histnostore histreduceblanks ignoreeof printexitvalue no_share_history
 COMPLETION_WAITING_DOTS=true
 export HISTSIZE=32768 HISTFILESIZE=$HISTSIZE
 export CLICOLOR=1 EDITOR=vim PAGER=less
 
+# ─────────────────────────────
 # NVM (if present)
+# ─────────────────────────────
 for NVM_DIR in "${XDG_CONFIG_HOME:-$HOME/.config}/nvm" "$HOME/.nvm"; do
   if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-    export NVM_DIR
-    . "$NVM_DIR/nvm.sh"
-    break
+    export NVM_DIR; . "$NVM_DIR/nvm.sh"; break
   fi
 done
 
+# ─────────────────────────────
 # zoxide (if present)
+# ─────────────────────────────
 command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 
-# fzf (brew-installed)
+# ─────────────────────────────
+# fzf bindings (works for brew OR apt installs)
+# ─────────────────────────────
 if command -v fzf >/dev/null; then
   [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 fi
-# fzf fallbacks (Debian/Ubuntu packages)
+# Debian/Ubuntu example scripts
 [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [[ -f /usr/share/doc/fzf/examples/completion.zsh    ]] && source /usr/share/doc/fzf/examples/completion.zsh
 
-# Completion init (fast/quiet)
+# Prefer ripgrep/fd if installed; otherwise provide sane fallbacks
+command -v rg >/dev/null || alias rg='grep -R --line-number --no-messages'
+if ! command -v fd >/dev/null; then
+  command -v fdfind >/dev/null && alias fd='fdfind'
+fi
+# Debian's bat is named batcat
+command -v bat >/dev/null || { command -v batcat >/dev/null && alias bat='batcat'; }
+
+# ─────────────────────────────
+# Completion (fast & quiet)
+# ─────────────────────────────
 autoload -Uz compinit
 compinit -C -u
 
-# Helpers: installers (mac via Homebrew; Debian/Ubuntu via apt)
+# ─────────────────────────────
+# Bootstrap helpers (OS-specific)
+# ─────────────────────────────
 brew-essentials() {
   brew install \
-    coreutils git fzf ncdu lnav p7zip watch zsh \
-    cloc httpie vim \
-    ripgrep fd bat htop \
+    coreutils git curl vim fzf ncdu lnav p7zip watch zsh \
+    cloc httpie ripgrep fd bat htop \
     cmake ctags
   brew install --cask font-jetbrains-mono
 }
+
 apt-essentials() {
-  sudo apt update && sudo apt install -y \
-    git zsh vim htop ncdu lnav p7zip-full watch cloc httpie cmake universal-ctags \
+  export DEBIAN_FRONTEND=noninteractive
+  sudo apt update
+  sudo apt install -y \
+    git zsh vim htop ncdu lnav p7zip-full watch cloc httpie cmake \
     ripgrep fzf fd-find bat
-  # Debian/Ubuntu alias fixes
+  # Aliases for Debian/Ubuntu names
   command -v bat >/dev/null || { command -v batcat >/dev/null && alias bat='batcat'; }
   command -v fd  >/dev/null || { command -v fdfind >/dev/null && alias fd='fdfind'; }
 }
 
-# One-shot bootstrap dispatcher
 bootstrap() {
   if [[ -n $IS_MAC ]]; then
     command -v brew >/dev/null && brew-essentials

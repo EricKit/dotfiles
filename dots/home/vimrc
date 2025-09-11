@@ -1,109 +1,77 @@
-" =========================
-" Plugins (vim-plug)
-" =========================
-call plug#begin('~/.vim/plugged')
-  " Theme
-  Plug 'morhetz/gruvbox'
+" ───────── Plugins (vim-plug) ─────────
+call plug#begin()
+Plug 'morhetz/gruvbox'
 
-  " Fuzzy finder
-  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-  Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
-  " Completion/LSP (CoC)
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'prettier/vim-prettier', { 'do': 'npm install' }
 
-  " Prettier (web formatting)
-  Plug 'prettier/vim-prettier', { 'do': 'npm install' }
+Plug 'lervag/vimtex'
+" Language plugins (keep only what you use)
+Plug 'pangloss/vim-javascript'
+Plug 'jparise/vim-graphql'
+Plug 'evanleck/vim-svelte'
+" Optional: which-key (can remove if you don't use it)
+" Plug 'liuchengxu/vim-which-key'
 call plug#end()
 
-" =========================
-" Sensible defaults
-" =========================
-set nocompatible
-syntax on
-filetype plugin indent on
-
-" UI
-set number relativenumber cursorline showmatch laststatus=2 ruler wildmenu lazyredraw
+" ───────── Core UI ─────────
+set background=dark
+colorscheme gruvbox
 if has('termguicolors') | set termguicolors | endif
-set background=dark | colorscheme gruvbox
-
-" Indent
-set expandtab shiftwidth=2 tabstop=2 softtabstop=2 autoindent smartindent
-
-" Search
-set hlsearch incsearch ignorecase smartcase
-
-" Clipboard
-if has('clipboard') | set clipboard=unnamedplus | endif
-
-" QoL
-set hidden scrolloff=3 backspace=indent,eol,start mouse=a cmdheight=2 updatetime=300
-set shortmess+=c
+set number
+set cursorline
 set signcolumn=yes
+set cmdheight=2
 
-" Persistent undo
-set backup
+" ───────── Files/encoding/newlines ─────────
+set encoding=utf-8
+set fileencoding=utf-8
+set eol
+set fixendofline
+
+" ───────── Tabs/indent ─────────
+set shiftwidth=2
+set tabstop=2
+set softtabstop=2
+set expandtab
+
+" ───────── Splits ─────────
+set splitright
+set splitbelow
+
+" ───────── Search/grep ─────────
+set hlsearch
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+  set grepformat=%f:%l:%c:%m
+endif
+
+" ───────── Performance/UX ─────────
+set lazyredraw
+set updatetime=300
+set shortmess+=c
+
+" ───────── Clipboard (optional) ─────────
+if has('clipboard')
+  set clipboard=unnamedplus
+endif
+
+" ───────── Undo/backup/swap ─────────
 if has('persistent_undo')
   set undofile
-  if !isdirectory($HOME.'/.vim/undo')
-    call mkdir($HOME.'/.vim/undo', 'p', 0700)
-  endif
-  set undodir=~/.vim/undo
+  set undodir^=~/.vim/undo//
 endif
+set backup
+set backupdir^=~/.vim/backup//
+set directory^=~/.vim/swap//
 
-" =========================
-" fzf
-" =========================
-nnoremap <C-p> :Files<CR>
+" ───────── FZF mappings ─────────
+nnoremap <expr> <C-p> exists('*fzf#vim#gitfiles') && !empty(system('git rev-parse --is-inside-work-tree 2>/dev/null')) ? ':GFiles<CR>' : ':Files<CR>'
 
-" =========================
-" CoC (coc.nvim)
-" =========================
-if has('nvim')
-  inoremap <silent><expr> <C-Space> coc#refresh()
-else
-  inoremap <silent><expr> <C-@> coc#refresh()
-endif
-
-inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
-      \ : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if index(['vim','help'], &filetype) >= 0
-    execute 'h ' . expand('<cword>')
-  elseif coc#rpc#ready()
-    call CocActionAsync('doHover')
-  else
-    execute '!' . &keywordprg . ' ' . expand('<cword>')
-  endif
-endfunction
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-nmap <leader>rn <Plug>(coc-rename)
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-nnoremap <silent><nowait> <space>a :<C-u>CocList diagnostics<CR>
-nnoremap <silent><nowait> <space>e :<C-u>CocList extensions<CR>
-nnoremap <silent><nowait> <space>c :<C-u>CocList commands<CR>
-nnoremap <silent><nowait> <space>o :<C-u>CocList outline<CR>
-nnoremap <silent><nowait> <space>s :<C-u>CocList -I symbols<CR>
-nnoremap <silent><nowait> <space>p :<C-u>CocListResume<CR>
-
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-" =========================
-" Prettier
-" =========================
+" ───────── Prettier ─────────
 let g:prettier#quickfix_enabled = 0
 let g:prettier#autoformat_require_pragma = 0
 augroup PrettierAuto
@@ -111,7 +79,40 @@ augroup PrettierAuto
   autocmd BufWritePre *.css,*.svelte,*.pcss,*.html,*.ts,*.js,*.json PrettierAsync
 augroup END
 
-" =========================
-" Misc
-" =========================
-set guifont=JetBrains\ Mono:h15
+" ───────── CoC (minimal, you already use these) ─────────
+" Use K to show documentation
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if index(['vim','help'], &filetype) >= 0
+    execute 'h '.expand('<cword>')
+  elseif coc#rpc#ready()
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" Navigation
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gy <Plug>(coc-type-definition)
+
+" Diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Format
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Statusline integration
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" ───────── VimTeX (mac-only viewer) ─────────
+let g:vimtex_compiler_latexmk = {'build_dir' : 'build'}
+if has('mac')
+  let g:vimtex_view_method = 'skim'
+  let g:vimtex_view_general_viewer = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+  let g:vimtex_view_general_options = '-r @line @pdf @tex'
+endif
