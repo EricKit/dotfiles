@@ -1,7 +1,7 @@
 ##### Basics #####
 set -g mouse on                       # enable mouse support (pane resize, selection, scroll)
 set -g history-limit 100000           # large scrollback buffer
-set -g default-terminal "tmux-256color"    # advertise tmux-256color if available
+set -g default-terminal "tmux-256color"
 set -ga terminal-overrides ",xterm-256color:Tc,tmux-256color:Tc"  # truecolor override
 
 ##### Pane navigation + splits (current dir) #####
@@ -25,11 +25,9 @@ bind %  split-window -h -c "#{pane_current_path}"
 bind r  source-file ~/.tmux.conf \; display "tmux reloaded"
 
 ##### Vi-style copy mode + clipboard integration #####
-setw -g mode-keys vi                  # use vi keys in copy-mode
-bind -T copy-mode-vi v send -X begin-selection
-bind -T copy-mode-vi y send -X copy-pipe-and-cancel "#{@copycmd}"
+setw -g mode-keys vi
 
-# Detect clipboard command (macOS pbcopy / Linux wl-copy or xclip), else fallback
+# Auto-detect system clipboard command (macOS pbcopy / Linux wl-copy or xclip)
 run-shell '
 if command -v pbcopy >/dev/null 2>&1; then
   tmux set -g @copycmd "pbcopy"
@@ -38,19 +36,34 @@ elif command -v wl-copy >/dev/null 2>&1; then
 elif command -v xclip >/dev/null 2>&1; then
   tmux set -g @copycmd "xclip -selection clipboard"
 else
-  tmux set -g @copycmd "cat >/dev/null"
+  tmux set -g @copycmd "cat >/dev/null"   # harmless fallback
 fi
 '
 
+# Copy with keys while in copy-mode (vi)
+bind -T copy-mode-vi v      send -X begin-selection
+bind -T copy-mode-vi y      send -X copy-pipe-and-cancel "#{@copycmd}"
+bind -T copy-mode-vi Enter  send -X copy-pipe-and-cancel "#{@copycmd}"
+
+# *** Fix: mouse drag to copy on release ***
+bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel "#{@copycmd}"
+
+# Smooth scroll into copy-mode with wheel (optional QoL)
+bind -n WheelUpPane if -F '#{pane_in_mode}' { send -X -M scroll-up } { copy-mode -e }
+bind -n WheelDownPane if -F '#{pane_in_mode}' { send -X -M scroll-down } { send -X cancel }
+
+# Enable OSC 52 clipboard if supported (tmux ≥3.2)
+set -s set-clipboard on
+
 ##### Quality-of-life #####
-set -g escape-time 0          # no ESC delay in vi mode
-set -g renumber-windows on    # renumber after closing windows
-set -g base-index 1           # windows start at 1
-setw -g pane-base-index 1     # panes start at 1
-set -g bell-action none       # disable bell flash/noise
+set -g escape-time 0
+set -g renumber-windows on
+set -g base-index 1
+setw -g pane-base-index 1
+set -g bell-action none
 
 ##### Extras #####
-# Synchronize panes toggle (send input to all panes at once)
+# Synchronize panes toggle
 bind S setw synchronize-panes \; display "sync-panes: #{?pane_synchronized,on,off}"
 
 # Resize panes with Vim-like keys (holdable)
@@ -59,5 +72,5 @@ bind -r J resize-pane -D 2
 bind -r K resize-pane -U 2
 bind -r L resize-pane -R 5
 
-# Enable OSC 52 clipboard integration if supported (tmux ≥3.2)
-set -g set-clipboard on
+# Quick mouse toggle if you ever want native terminal selection
+bind m set -g mouse \; display "tmux: mouse #{?mouse,on,off}"
