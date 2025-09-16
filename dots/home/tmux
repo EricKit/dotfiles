@@ -18,6 +18,10 @@ bind -n C-j select-pane -D
 bind -n C-k select-pane -U
 bind -n C-l select-pane -R
 
+set -g prefix C-a
+unbind C-b
+bind C-a send-prefix
+
 bind '"' split-window -v -c "#{pane_current_path}"
 bind %  split-window -h -c "#{pane_current_path}"
 
